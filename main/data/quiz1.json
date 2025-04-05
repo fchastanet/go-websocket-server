@@ -1,0 +1,138 @@
+{
+  "id": 1,
+  "title": "Laugh and Learn : Curious Creatures and Crazy Questions",
+  "type": 0,
+  "url": "",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Which animal is known for its dancing skills?",
+      "url": "https://ck-heimdall.s3.sa-east-1.amazonaws.com/fchastanet/2b7762a6-d55d-41f9-935b-fe98b26302fa.jpg",
+      "answers": [
+        {
+          "id": 1,
+          "title": "Kangaroo",
+          "url": "",
+          "correct": 1
+        },
+        {
+          "id": 2,
+          "title": "Flamingo",
+          "url": "",
+          "correct": 0
+        },
+        {
+          "id": 3,
+          "title": "Penguin",
+          "url": "",
+          "correct": 0
+        },
+        {
+          "id": 4,
+          "title": "Sloth",
+          "url": "",
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "What is SpongeBob's superpower?",
+      "url": "https://ck-heimdall.s3.sa-east-1.amazonaws.com/fchastanet/image.jpg",
+      "answers": [
+        {
+          "id": 11,
+          "title": "Flying",
+          "url": "",
+          "correct": 1
+        },
+        {
+          "id": 12,
+          "title": "Becoming invisible",
+          "url": "",
+          "correct": 0
+        },
+        {
+          "id": 13,
+          "title": "Blowing bubbles",
+          "url": "",
+          "correct": 0
+        },
+        {
+          "id": 14,
+          "title": "Talking to fish",
+          "url": "",
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "Which fruit is often associated with luck?",
+      "url": "https://ck-heimdall.s3.sa-east-1.amazonaws.com/fchastanet/1b1412da-204f-40ce-9539-379dd1a6be5b.jpg",
+      "answers": [
+        {
+          "id": 21,
+          "title": "Apple",
+          "url": "",
+          "correct": 1
+        },
+        {
+          "id": 22,
+          "title": "Banana",
+          "url": "",
+          "correct": 0
+        },
+        {
+          "id": 23,
+          "title": "Strawberry",
+          "url": "",
+          "correct": 0
+        },
+        {
+          "id": 24,
+          "title": "Kiwi",
+          "url": "",
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "question": "What is the best way to get rid of a vampire?",
+      "url": "https://ck-heimdall.s3.sa-east-1.amazonaws.com/fchastanet/105ee10f-220e-4ac5-9510-f6b0082bb0ce.jpg",
+      "answers": [
+        {
+          "id": 31,
+          "title": "Offer it a coffee",
+          "url": "",
+          "correct": 1
+        },
+        {
+          "id": 32,
+          "title": "Show it a mirror",
+          "url": "",
+          "correct": 0
+        },
+        {
+          "id": 33,
+          "title": "Give it garlic",
+          "url": "",
+          "correct": 0
+        },
+        {
+          "id": 34,
+          "title": "Sing it a lullaby",
+          "url": "",
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "question": "What do you think about this quiz?",
+      "url": "https://ck-heimdall.s3.sa-east-1.amazonaws.com/fchastanet/If-You-Can-Make-It-Through-This-Quiz-Without-Tripping-Up-You-Probably-Know-Everything.jpg",
+      "questionType": 1
+    }
+  ]
+}

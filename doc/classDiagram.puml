@@ -1,0 +1,191 @@
+@startuml learnLoop Application Class Diagram
+top to bottom direction
+hide empty methods
+skinparam groupInheritancePadding 10
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor<<Highlighted>> #A9DCDF
+  BackgroundColor<<Disabled>> #9A9A9A
+}
+
+package "auth" {
+  class Claims {
+    +UserID: string
+    +InstanceName: string
+  }
+
+  class auth {
+    +ValidateJWT(tokenString string): (string, string, error)
+    -getPublicKey(): ([]byte, error)
+    -{static} publicKey: []byte
+    -{static} publicKeyMux: sync.RWMutex
+    -{static} keyFetchTime: time.Time
+    -{static} keyTTL: time.Duration
+  }
+}
+
+package "config" {
+  class config {
+    +{static} DevMode: bool
+    +{static} Addr: string
+  }
+}
+
+package "websocket" {
+  class Hub {
+    -clients: map[*Client]bool
+    -sessionClients: map[string][]*Client
+    -broadcast: chan []byte
+    -register: chan *Client
+    -unregister: chan *Client
+    +run()
+  }
+
+  note right of Hub::sessionClients
+    Maps session IDs to clients,
+    allowing targeted broadcasting
+  end note
+
+
+  class sessionMessage {
+    -sessionID: string
+    -content: []byte
+  }
+  class Client {
+    +Hub: *Hub
+    +User: *models.User
+	  +CloseHandler: CloseHandler
+	  +MessageHandler: MessageHandler
+    -conn: *websocket.Conn
+    -send: chan []byte
+    -activities: map[string]bool
+    ====Methods====
+    +readPump()
+    +writePump()
+    +IsRegisteredToActivity(activityID string): bool
+    +Close()
+  }
+
+  note right of Client::activities
+    Stores activity IDs that
+    this client is registered to
+  end note
+}
+
+package "models" {
+  class CommandServices {
+    +MessageSender: func(user *User, message interface{}) error
+    +SendUserConnectMessageForAllUsersInSession: func(session *Session) error
+    +GetQuiz: func(quizId int) (*Quiz, error)
+  }
+
+  class Session {
+    +SessionID: string
+    +QuizGame: *QuizGame
+	}
+
+  class Quiz {
+    +SessionID: string
+    +StartedBy: string
+    +StartedAt: time.Time
+    +GetConnectedPlayersCount: func() int
+	  ==== private fields ====
+    -quiz: *Quiz
+	  -questionStats: map[int]QuestionStats
+	  -playerStats: map[string]PlayerStat
+    -currentQuestionIndex: int
+    -players: []string
+    ==== timeout management ====
+    -currentQuizQuestion: *Question
+    -questionTimer:       *time.Timer
+    -questionTimeout:     time.Duration
+    -commandServices:     CommandServices
+  }
+
+  class QuizGame {
+    -questionTimeout: time.Duration
+    -commandServices: CommandServices
+    -quiz: *Quiz
+    +Start(quiz *Quiz, user *User)
+    +NextQuizQuestionMessage(): interface{}
+    +AnswerMCQuestion(questionId string, answers []string, user *User): (*QuizQuestionStatsMessage, error)
+    +AnswerFreeTextQuestion(questionId string, answers []string, user *User): (*QuizQuestionStatsMessage, error)
+  }
+
+  interface Command {
+    +Execute(user *User, session *Session, commandServices CommandServices): error
+  }
+
+  class Message {
+    +From: Recipient
+    +Execute(user *User, session *Session, commandServices CommandServices): error
+  }
+
+  Command <|.. Message
+
+  together {
+    class UserConnectMessage {}
+    class UserDisconnectMessage {}
+    class QuizStartMessage {}
+    class QuizNextQuestionMessage {}
+  }
+
+  together {
+    class QuizQuestionStatsMessage {}
+    class QuizQuestionMessage {}
+    class QuizLearnerAnswerMessage {}
+    class QuizLearnerAnswerFreeTextMessage {}
+    class QuizQuestionEndMessage {}
+    QuizStartMessage -[hidden]d- QuizQuestionStatsMessage
+    Message <|-d- UserConnectMessage
+    Message <|-d- UserDisconnectMessage
+    Message <|-- QuizStartMessage
+    Message <|-- QuizNextQuestionMessage
+    Message <|-- QuizQuestionMessage
+    Message <|-- QuizLearnerAnswerMessage
+    Message <|-- QuizLearnerAnswerFreeTextMessage
+    Message <|-- QuizQuestionStatsMessage
+    Message <|-- QuizQuestionEndMessage
+  }
+
+  class Recipient {
+    +Type: string
+    +Id: string
+  }
+
+  class User {
+    +Login: string
+    +UserID: string
+    +SessionID: string
+    +InstanceName: string
+  }
+
+  Recipient -[hidden]down- User
+}
+
+' Relationships
+models.User <-d- Client::User
+Hub "1" o-- "many" Client : manages >
+Client "1" o-- "1" Hub : connected to >
+Client "1" -left- "many" Command : executes >
+Client --> auth.auth : uses for authentication >
+Client --> config : uses >
+Hub -u-> sessionMessage : broadcasts >
+auth.auth --> Claims : uses >
+
+Session "1" *-- "1" QuizGame
+Message -r-> Recipient
+QuizGame --> Quiz
+CommandServices --> Quiz
+
+note bottom of auth.auth
+  Validates JWT token and
+  extracts user ID and instance name
+end note
+
+note top of models.Command
+  Interface used for processing
+  all incoming messages
+end note
+
+@enduml

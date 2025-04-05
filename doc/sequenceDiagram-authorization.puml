@@ -1,0 +1,71 @@
+@startuml WebSocket Authorization Flow
+!pragma teoz true
+
+actor "User 1" as user1
+actor "User 2" as user2
+participant "Browser" as browser
+participant "WebSocket Server" as ws
+participant "Hub" as hub
+participant "Web Server" as webServer #LightBlue
+
+par
+    user2 -> browser
+    & user1 -> browser: as user authenticated access chat application
+    == Load React application ==
+    group Load React application
+        activate browser
+        activate webServer
+        browser -> webServer: Generate chat application page
+        webServer -> webServer: Generate JWT token
+        webServer --> browser: Return react application including JWT token
+        deactivate webServer
+    end
+
+    == Web Socket Authentication ==
+    browser -> ws: WS Connect + JWT token + sessionId + activityId
+    activate ws
+    ws -> hub: Authenticate client (verify JWT)
+    activate hub
+    alt if JWT public key not cached
+        hub -> webServer: get public JWT key (if not cached)
+        activate webServer
+        webServer --> hub: return public JWT key
+        deactivate webServer
+    end
+    hub -> hub: associate "${instanceName}-${sessionId}-${activityId}" with user id
+    hub -> hub: associate "${instanceName}-${sessionId}" with user id (chat activity)
+    hub --> ws: Client authorized
+    ws --> browser: Connection established
+    ws --> browser: Show connection status
+    deactivate hub
+    deactivate ws
+
+    == user 1 registers to activityId 1 ==
+    user1 -> browser: send a message to register to activity id 1 on session id 1
+    activate ws
+    browser -> ws: send a registerActivity message with activity id 1 and session id 1
+    ws --> browser: activity registered
+    deactivate ws
+
+    == user 1 sends a message to session id 1 ==
+    user1 -> browser: send a message to session id 1
+    browser -> ws: send a message to session id 1
+    activate ws
+    loop each client associated to session id 1
+        ws -> hub: broadcast message to current client
+        hub --> browser: message send message to user
+    end
+
+    == facilitator launch a quiz ==
+    facilitator -> browser: launch the quiz with the users connected to current activity
+    browser -> hub: launch quiz
+    hub -> hub: check if current user is facilitator (using jwt)
+    activate ws
+    loop each client associated to session id 1 and activity id 1
+        ws -> hub: broadcast message to current client
+        hub --> browser: message send message to user
+        browser -> browser: quiz activity starts
+    end
+end
+
+@enduml

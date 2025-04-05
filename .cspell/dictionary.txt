@@ -1,0 +1,22 @@
+# Custom Dictionary Words
+actionlint
+chan
+codespell
+enduml
+fumpt
+Github
+golangci
+goroutines
+jwks
+LearnLoop
+mdformat
+plantuml
+shellcheck
+shfmt
+skinparam
+startuml
+teoz
+unmarshal
+unregisters
+upgrader
+Upgrader

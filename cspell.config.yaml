@@ -1,0 +1,38 @@
+version: "0.2"
+noConfigSearch: true
+caseSensitive: true
+useGitignore: true
+enableGlobDot: true
+ignorePaths:
+  - ".history/**"
+  - ".vscode/**"
+  - ".cspell/**"
+  - "node_modules/**"
+  - "dist/**"
+  - "build/**"
+  - "coverage/**"
+  - "docs/**"
+  - "public/**"
+  - "go.mod"
+  - "go.sum"
+dictionaryDefinitions:
+  - name: "cspell-dict-en"
+    path: ".cspell/dictionary.txt"
+dictionaries:
+  - "cspell-dict-en"
+words: []
+ignoreWords:
+  - userA
+import: []
+patterns:
+  - name: urls
+    pattern: "/https?://([^ \t\"'()]+)/g"
+  - name: packages
+    pattern: "/[-A-Za-z0-9.]+/[-A-Za-z0-9.]+/g"
+  - name: markdownToc
+    pattern: "\\]\\(#[^)]+\\)$"
+
+ignoreRegExpList:
+  - urls
+  - packages
+  - markdownToc
