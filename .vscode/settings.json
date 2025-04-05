@@ -6,5 +6,6 @@
       "addWords": true,
       "scope": "workspace"
     }
-  }
+  },
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
 }
